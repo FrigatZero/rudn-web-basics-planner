@@ -1,0 +1,30 @@
+.Editor {
+    display: flex;
+    background-color: rgb(53, 48, 69);
+    width: 100%;
+    height: 100%;
+}
+
+.Editor__panel {
+    background-color: rgb(39, 26, 61);
+    flex: 0 0 100px;
+}
+
+.Panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Panel__boxButton {
+    background-color: red;
+    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    
+}
+
+.Editor__workspace {
+    position: relative;
+    flex: 1 0 0;
+}

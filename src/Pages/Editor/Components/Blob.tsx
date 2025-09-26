@@ -1,31 +1,17 @@
 import React from "react";
 import { TestComponentProps } from "./test";
-import { CONFIG } from "./config.jsx"
+import { SIDE, BLOB_SIZE } from "./config.ts"
+import './Blob.css';
+import classNames from "classnames";
 
 export interface BlobProps {
     parentProps: TestComponentProps;
-    side: number;
+    side: SIDE;
 }
 
 export const Blob = (props: BlobProps) => {
     const blobRef = React.useRef<HTMLDivElement>(null);
     const parent = props.parentProps;
-
-    const blobX = ():number => {
-        switch(props.side){
-                case CONFIG.TOP_LEFT:  case CONFIG.BOTTOM_LEFT:  return - (CONFIG.BLOB_SIZE/2);
-                case CONFIG.TOP_RIGHT: case CONFIG.BOTTOM_RIGHT: return parent.size.width - (CONFIG.BLOB_SIZE/2);
-                default: return 0;
-            }
-    }
-    const blobY = ():number => {
-        switch(props.side){
-                case CONFIG.TOP_LEFT:    case CONFIG.TOP_RIGHT:    return - (CONFIG.BLOB_SIZE/2);
-                case CONFIG.BOTTOM_LEFT: case CONFIG.BOTTOM_RIGHT: return parent.size.height - (CONFIG.BLOB_SIZE/2);
-                default: return 0;
-            }
-    }
-
     // обработка событий Blob
     const isBlobDown = React.useRef<boolean>(false);
     const handleBlobDown = (e: React.PointerEvent) => {
@@ -41,32 +27,73 @@ export const Blob = (props: BlobProps) => {
         blobRef.current?.releasePointerCapture(e.pointerId);
     }
     const handleBlobMove = (e: React.PointerEvent) => {
+        const doResize = (newWidth:number, newHeight:number, newX:number, newY:number) => {
+            parent.onResize(
+                parent.id, 
+                {
+                    width: newWidth, 
+                    height: newHeight
+                }
+            );
+            parent.onPositionChange(
+                parent.id, 
+                {
+                    x: newX,
+                    y: newY
+                }
+            );
+        }
         if(isBlobDown.current) {
             switch(props.side){
-                case CONFIG.TOP_LEFT:
-                    parent.onResize(parent.id, {width: parent.size.width - e.movementX, height: parent.size.height - e.movementY});
-                    parent.onPositionChange(parent.id, {x: parent.position.x + e.movementX, y: parent.position.y + e.movementY});
+                case SIDE.TOP_LEFT:
+                    doResize(
+                        parent.size.width  - e.movementX,
+                        parent.size.height - e.movementY,
+                        parent.position.x  + e.movementX,
+                        parent.position.y  + e.movementY
+                    )
                     break;
-                case CONFIG.TOP_RIGHT: 
-                    parent.onResize(parent.id, {width: parent.size.width + e.movementX, height: parent.size.height - e.movementY});
-                    parent.onPositionChange(parent.id, {x: parent.position.x, y: parent.position.y + e.movementY});
+                case SIDE.TOP_RIGHT: 
+                    doResize(
+                        parent.size.width  + e.movementX,
+                        parent.size.height - e.movementY,
+                        parent.position.x,
+                        parent.position.y  + e.movementY
+                    )
                     break;
-                case CONFIG.BOTTOM_LEFT:
-                    parent.onResize(parent.id, {width: parent.size.width - e.movementX, height: parent.size.height + e.movementY});
-                    parent.onPositionChange(parent.id, {x: parent.position.x + e.movementX, y: parent.position.y});
+                case SIDE.BOTTOM_LEFT:
+                    doResize(
+                        parent.size.width  - e.movementX,
+                        parent.size.height + e.movementY,
+                        parent.position.x  + e.movementX,
+                        parent.position.y
+                    )
                     break;
-                case CONFIG.BOTTOM_RIGHT:
-                    parent.onResize(parent.id, {width: parent.size.width + e.movementX, height: parent.size.height + e.movementY});
-                    parent.onPositionChange(parent.id, {x: parent.position.x, y: parent.position.y});
+                case SIDE.BOTTOM_RIGHT:
+                    doResize(
+                        parent.size.width  + e.movementX,
+                        parent.size.height + e.movementY,
+                        parent.position.x,
+                        parent.position.y
+                    )
                     break;
-
-            }
-            
+            }    
         }
     }
-
+    const classBySide = (side: SIDE) => {
+        switch (side) {
+            case SIDE.TOP_LEFT: return '_topLeft'
+            case SIDE.TOP_RIGHT: return '_topRight'
+            case SIDE.BOTTOM_LEFT: return '_bottomLeft'
+            case SIDE.BOTTOM_RIGHT: return '_bottomRight'
+            default: return null;
+        }
+    }
     return <div 
-                className="Blob"
+                className={classNames( 
+                    "Blob",
+                    classBySide(props.side)
+                )} 
                 onPointerDown={handleBlobDown}
                 onPointerUp={handleBlobUp}
                 onPointerMove={handleBlobMove}
@@ -74,14 +101,11 @@ export const Blob = (props: BlobProps) => {
                 ref={blobRef}
 
                 style={{
-                    width:           CONFIG.BLOB_SIZE,
-                    height:          CONFIG.BLOB_SIZE,
+                    ['--size']: BLOB_SIZE + 'px',
                     backgroundColor: "brown",
-                    borderRadius:    CONFIG.BLOB_SIZE*0.2,
+                    borderRadius:    '20%',
                     position:        "absolute",
-                    left:            blobX(),
-                    top:             blobY()
-                }}
+                } as React.CSSProperties}
             >
     </div>
 }

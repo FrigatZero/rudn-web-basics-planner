@@ -13,15 +13,15 @@ export const Blob = (props: BlobProps) => {
 
     const blobX = ():number => {
         switch(props.side){
-                case CONFIG.TOP_LEFT:  case CONFIG.BOTTOM_LEFT:  return -5;
-                case CONFIG.TOP_RIGHT: case CONFIG.BOTTOM_RIGHT: return parent.size.width - 5;
+                case CONFIG.TOP_LEFT:  case CONFIG.BOTTOM_LEFT:  return - (CONFIG.BLOB_SIZE/2);
+                case CONFIG.TOP_RIGHT: case CONFIG.BOTTOM_RIGHT: return parent.size.width - (CONFIG.BLOB_SIZE/2);
                 default: return 0;
             }
     }
     const blobY = ():number => {
         switch(props.side){
-                case CONFIG.TOP_LEFT:    case CONFIG.TOP_RIGHT:    return -5;
-                case CONFIG.BOTTOM_LEFT: case CONFIG.BOTTOM_RIGHT: return parent.size.height - 5;
+                case CONFIG.TOP_LEFT:    case CONFIG.TOP_RIGHT:    return - (CONFIG.BLOB_SIZE/2);
+                case CONFIG.BOTTOM_LEFT: case CONFIG.BOTTOM_RIGHT: return parent.size.height - (CONFIG.BLOB_SIZE/2);
                 default: return 0;
             }
     }
@@ -74,13 +74,13 @@ export const Blob = (props: BlobProps) => {
                 ref={blobRef}
 
                 style={{
-                    width: 10,
-                    height: 10,
+                    width:           CONFIG.BLOB_SIZE,
+                    height:          CONFIG.BLOB_SIZE,
                     backgroundColor: "brown",
-                    borderRadius: 2,
-                    position: "absolute",
-                    left: blobX(),
-                    top: blobY()
+                    borderRadius:    CONFIG.BLOB_SIZE*0.2,
+                    position:        "absolute",
+                    left:            blobX(),
+                    top:             blobY()
                 }}
             >
     </div>

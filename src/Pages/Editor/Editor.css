@@ -1,30 +1,303 @@
-.Editor {
-    display: flex;
+/* ROOT */
+.editor {
     background-color: rgb(53, 48, 69);
     width: 100%;
     height: 100%;
+    display: grid;
+    grid-template: 
+        "settings settings " 70px
+        "panel    workspace" auto / minmax(180px, 15%) auto
+    ;
 }
-
-.Editor__panel {
+/* ПАНЕЛЬ НАСТРОЕК */
+.editor__settings {
+    background-color: rgb(190, 199, 207);
+    display: grid;
+    grid-template: 
+        "pan-set main    " auto
+        "pan-set status  " auto
+        "pan-set selector" 30% / minmax(180px, 15%) auto
+    ;
+    grid-area: settings;
+}
+    .panel-settings {
+        background-color: rgb(190, 199, 207);;
+        color: rgb(50, 50, 50);
+        text-align: center;
+        border-right: 4px solid rgb(150, 158, 164);
+        font-weight: 600;
+        grid-area: pan-set;
+    }
+    .main-menu {
+        background-color: rgb(0, 0, 0);
+        display: flex;
+        grid-area: main;
+    }
+        .main-menu__file {
+            background-color: black;
+            height: 100%;
+            border-radius: 4px;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+            user-select: none;
+        }
+        .main-menu__edit {
+            background-color: black;
+            height: 100%;
+            border-radius: 4px;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+            user-select: none;
+        }
+        .main-menu__help {
+            background-color: black;
+            height: 100%;
+            border-radius: 4px;
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: center;
+            user-select: none;
+        }
+        .main-menu__file:hover {
+            background-color: rgb(45, 45, 45);
+        }
+        .main-menu__edit:hover {
+            background-color: rgb(45, 45, 45);
+        }
+        .main-menu__help:hover {
+            background-color: rgb(45, 45, 45);
+        }
+    .status-bar {
+        background-color: rgb(0, 0, 0);
+        display: flex;
+        justify-content: end;
+        color: white;
+        font-weight: 600;
+        grid-area: status;
+    }
+        .status-bar__total {
+            background-color: rgb(57, 140, 213);
+            font-weight: 600;
+            border-radius: 10px;
+            color: white;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .status-bar__running {
+            background-color: rgb(46, 177, 41);
+            font-weight: 600;
+            border-radius: 10px;
+            color: white;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .status-bar__stopped {
+            background-color: rgb(209, 42, 42);
+            font-weight: 600;
+            border-radius: 10px;
+            color: white;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    .sheet-selector {
+        background-color: rgb(0, 0, 0);
+        display: flex;
+        border-bottom: 4px solid rgb(150, 158, 164);
+        color: black;
+        font-weight: 600;
+        grid-area: selector;
+    }
+        .sheet-selector__sheet {
+            background-color: rgb(150, 158, 164);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding-left: 40px;
+            padding-right: 40px;
+            user-select: none;
+        }
+/* ПАНЕЛЬ ПАРАМЕТРОВ */
+.editor__panel {
     background-color: rgb(39, 26, 61);
-    flex: 0 0 100px;
-}
-
-.Panel {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    grid-area: panel;
 }
+/*  ПАНЕЛЬ ИНСТРУМЕНТОВ */
+    .toolbox {
+        background-color: rgb(190, 199, 207);
+        display: grid;
+        grid-template: 
+            "search   scroll" 35px
+            "toolList scroll" auto / minmax(160px, auto) 20px
+        ;
+        overflow: hidden;
+        flex: 1 0 0;
+    }
+        .toolbox__search {
+            background-color: rgb(150, 158, 164);
+            display: flex;
+            justify-content: center;
+            grid-area: search;
+        }
+        .toolbox__list {
+            background-color: rgb(190, 199, 207);
+            gap: 10px;
+            grid-area: toolList;
+        }
+            .boxButton {
+                background-color: rgb(190, 199, 207);
+                color: black;
+                width: auto;
+                height: 30px;
+                padding: 10px;
+                cursor: pointer;
+                user-select: none;
+            }
+            .boxButton:hover {
+                background-color: rgb(115, 120, 125);
+            }
+        .toolbox__scroll {
+            background-color: rgb(40, 45, 49);
+            position: relative;
+            grid-area: scroll;
+        }
+    .block-details {
+        background-color: rgb(190, 199, 207);
+        border-right: 4px solid rgb(126, 132, 136);
+        flex: 1 0 0;
+    }
+        .block-details__name {
+            background-color: rgb(126, 132, 136);
+            color: rgb(50, 50, 50);
+            font-weight: 600;
+            padding-left: 10px;
+            padding-right: 5px;
 
-.Panel__boxButton {
-    background-color: red;
-    border-radius: 10px;
-    width: 30px;
-    height: 30px;
-    
-}
+            display: flex;
+            justify-content: space-between;
+            user-select: none;
+        }
 
-.Editor__workspace {
+/* ПАНЕЛЬ РАБОЧЕЙ ЗОНЫ */
+.editor__workspace {
     position: relative;
-    flex: 1 0 0;
+    grid-area: workspace;
+    overflow: hidden;
 }
+    .file-path {
+        background-color: rgba(0, 0, 0, 0.3);
+        color: aliceblue;
+        font-weight: 600;
+        padding-left: 10px;
+        width: auto;
+        height: 24px;
+    }
+    .file-path:hover {
+        text-decoration: underline;
+    }
+    .action-bar {
+        background-color: rgba(0, 0, 0, 0.2);
+        position: absolute;
+        display: flex;
+        width: 170px;
+        height: 30px;
+        margin: 10px;
+        border-radius: 4px;
+        align-items: center;
+        justify-content: space-around;
+    }
+        .action-bar__remove {
+            background-color: rgb(0, 0, 0);
+            width: 25px;
+            height: 25px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .action-bar__complex {
+            width: 50px;
+            height: 25px;
+            display: flex;
+        }
+            .action-bar__complex__undo {
+                background-color: rgb(0, 0, 0);
+                width: 25px;
+                height: 25px;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                display: flex;
+                justify-content: center;
+                cursor: pointer;
+            }
+            .action-bar__complex__redo {
+                background-color: rgb(0, 0, 0);
+                width: 25px;
+                height: 25px;
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                display: flex;
+                justify-content: center;
+                cursor: pointer;
+            }
+            .action-bar__complex__copy {
+                background-color: rgb(0, 0, 0);
+                width: 25px;
+                height: 25px;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                display: flex;
+                justify-content: center;
+                cursor: pointer;
+            }
+            .action-bar__complex__paste {
+                background-color: rgb(0, 0, 0);
+                width: 25px;
+                height: 25px;
+                border-top-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                display: flex;
+                justify-content: center;
+                cursor: pointer;
+            }
+        .action-bar__search {
+            background-color: rgb(0, 0, 0);
+            width: 25px;
+            height: 25px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+        }
+    .zoom-box {
+        position: absolute;
+        bottom: 0px;
+        display: flex;
+        flex-direction: column;
+        height: 60px;
+        width: 30px;
+        margin: 10px;
+    }
+        .zoom-box__In {
+            background-color: rgb(0, 0, 0);
+            padding: 0;
+            height: 30px;
+            border-top: 5px;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+        .zoom-box__Out {
+            background-color: rgb(0, 0, 0);
+            padding: 0;
+            height: 30px;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+        }

@@ -1,23 +1,13 @@
-import { useEffect, useRef } from "react";
 import './SimpleBox.css'
-import { TestComponent } from './test';
+import { BoxInteractionController } from './BoxInteractionController';
 
 export function SimpleBox(props) {
-    // const ref = useRef(null);
-    // useEffect(() => {
-    //     const element = ref.current;
-    //     const handle = () => {
-    //         console.log("workk!", props);
-    //     }
-    //     if (element) {
-    //         element.addEventListener('click', handle);
-
-    //         return () => {
-    //             element.removeEventListener('click', handle);
-    //         }
-    //     }
-    // }, [])
-    return <TestComponent 
+    //
+    //
+    // ДЛЯ БУДУЩЕЙ РЕАЛИЗАЦИИ
+    //
+    //
+    return <BoxInteractionController 
                     id={props.id} 
                     position={props.position}
                     size={props.size}

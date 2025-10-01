@@ -1,11 +1,11 @@
 import React from "react";
-import { TestComponentProps } from "./test";
+import { BoxInteractionControllerProps } from "./BoxInteractionController.tsx";
 import { SIDE, BLOB_SIZE } from "./config.ts"
 import './Blob.css';
 import classNames from "classnames";
 
 export interface BlobProps {
-    parentProps: TestComponentProps;
+    parentProps: BoxInteractionControllerProps;
     side: SIDE;
 }
 
@@ -15,7 +15,6 @@ export const Blob = (props: BlobProps) => {
     // обработка событий Blob
     const isBlobDown = React.useRef<boolean>(false);
     const handleBlobDown = (e: React.PointerEvent) => {
-        // e.preventDefault();
         e.stopPropagation();
         if (isBlobDown) {
             isBlobDown.current = true;
@@ -102,8 +101,7 @@ export const Blob = (props: BlobProps) => {
 
                 style={{
                     ['--size']: BLOB_SIZE + 'px',
-                    backgroundColor: "brown",
-                    borderRadius:    '20%',
+                    borderRadius:    "20%",
                     position:        "absolute",
                 } as React.CSSProperties}
             >

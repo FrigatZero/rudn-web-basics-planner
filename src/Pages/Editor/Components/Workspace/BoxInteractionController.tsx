@@ -1,7 +1,6 @@
-import React from "react";
-import { Blob } from './Blob';
-import { CONFIG } from './config.jsx'
-
+import { useRef } from "react";
+import { Blob } from './Blob.tsx';
+import { SIDE } from './config.ts'
 
 export interface IPosition {
     x: number;
@@ -12,7 +11,7 @@ export interface ISize {
     height: number;
 }
 
-export interface TestComponentProps {
+export interface BoxInteractionControllerProps {
     id: number;
     position: IPosition;
     size: ISize;
@@ -20,11 +19,10 @@ export interface TestComponentProps {
     onResize(id: number, newSize: ISize): void;
 }
 
-export const TestComponent = (props: TestComponentProps) => {
-    const ref = React.useRef<HTMLDivElement>(null);
-
+export const BoxInteractionController = (props: BoxInteractionControllerProps) => {
+    const ref = useRef<HTMLDivElement>(null);
     // Обработка событий нажатия мышью
-    const isDown = React.useRef<boolean>(false);
+    const isDown = useRef<boolean>(false);
     const handleDown = (e: React.PointerEvent) => {
         if (isDown) {
             isDown.current = true;
@@ -37,10 +35,9 @@ export const TestComponent = (props: TestComponentProps) => {
     }
     const handleMove = (e: React.PointerEvent) => {
         if(isDown.current) {
-            props.onPositionChange(props.id, {x: props.position.x + e.movementX, y: props.position.y + e.movementY});
+            props.onPositionChange(props.id, {x: (props.position.x + e.movementX), y: (props.position.y + e.movementY)});
         }
     }
-    
     return <div
                 className="SimpleBox"
                 onPointerDown={handleDown}
@@ -59,19 +56,19 @@ export const TestComponent = (props: TestComponentProps) => {
             {props.id}
             <Blob
                 parentProps={props}
-                side={CONFIG.TOP_LEFT}
+                side={SIDE.TOP_LEFT}
             />
             <Blob
                 parentProps={props}
-                side={CONFIG.TOP_RIGHT}
+                side={SIDE.TOP_RIGHT}
             />
             <Blob
                 parentProps={props}
-                side={CONFIG.BOTTOM_LEFT}
+                side={SIDE.BOTTOM_LEFT}
             />
             <Blob
                 parentProps={props}
-                side={CONFIG.BOTTOM_RIGHT}
+                side={SIDE.BOTTOM_RIGHT}
             />
     </div>
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import './Editor.css'
 import { SimpleBox } from './Components/Workspace/SimpleBox';
-import { Scroller } from './Scroller';
 import BoxButtonSvg from './assets/box.svg'
 import CrossSvg from './assets/cross.svg'
 import UndoSvg from './assets/undo.svg'
@@ -11,6 +10,11 @@ import PasteSvg from './assets/paste.svg'
 import SearchSvg from './assets/search.svg'
 
 export default function Editor(){
+    const [
+        searchValue,
+        setSearchValue
+    ] = useState("");
+
     // Хуки для элементов рабочей области
     const [
         objectId,
@@ -20,13 +24,6 @@ export default function Editor(){
         workspaceObjects, 
         setWorkspaceObjects
     ] = useState([]);
-    
-    // Хук для позиции скролла
-    const [
-        scrollPosition,
-        setScrollPosition
-    ] = useState(0);
-    
     // Хуки для элементов панели инструментов
     const [
         toolboxObjectId,
@@ -36,7 +33,6 @@ export default function Editor(){
         toolboxObjects,
         setToolboxObjects
     ] = useState([]);
-    
     // Обработчик нажатия на кнопку создания коробки
     const on_click_boxButton_handler = () => {
         setWorkspaceObjects([
@@ -49,7 +45,9 @@ export default function Editor(){
         ]);
         setObjectId(i => i + 1);
     }
-
+    const on_change_search_handler = (e) => {
+        setSearchValue(e.target.value);
+    }
     // Получение объектов рабочей области
     const getWorkspaceObjects = () => {
         return <>
@@ -79,46 +77,57 @@ export default function Editor(){
         }
         </>
     }
-
     // Получение объектов панели инструментов
     const getToolboxObjects = () => {
+        function BoxButton() {
+            return <>
+            {
+                toolboxObjects.map(element => 
+                    (
+                        <div 
+                            className='boxButton' 
+                            key={element.toolboxObjectId + 'tb'}
+                            onClick={on_click_boxButton_handler}
+                            >
+                                <img 
+                                    src={BoxButtonSvg} 
+                                    alt='' 
+                                    width="30" 
+                                    style={{
+                                        marginRight: "10px",
+                                        verticalAlign: "middle",
+                                    }}
+                                ></img>
+                                Box #{element.toolboxObjectId} 
+                        </div>
+                    )
+                )
+            }
+            </>
+        }
+
         return <>
         {
-            toolboxObjects.map(element => 
-                (
-                    <div 
-                        className='boxButton' 
-                        key={element.toolboxObjectId + 'tb'}
-                        onClick={on_click_boxButton_handler}
-                        >
-                            <img 
-                                src={BoxButtonSvg} 
-                                alt='' 
-                                width="30" 
-                                style={{
-                                    marginRight: "10px",
-                                    verticalAlign: "middle",
-                                }}
-                            ></img>
-                            Box #{element.toolboxObjectId} 
-                    </div>
-                )
-            )
+            searchValue ? 0 : <BoxButton/>
         }
         </>
     }
-
     useEffect(
         () => {
             setToolboxObjects(
                 [
                     {toolboxObjectId:1},
-                    {toolboxObjectId:2}
+                    {toolboxObjectId:2},
+                    {toolboxObjectId:3},
+                    {toolboxObjectId:4},
+                    {toolboxObjectId:5},
+                    {toolboxObjectId:6},
+                    {toolboxObjectId:7},
+                    {toolboxObjectId:8},
                 ]
             );
         }, []    
     )
-
     return (
         <div className='editor'>
             <div className='editor__settings'>
@@ -166,26 +175,21 @@ export default function Editor(){
             <div className='editor__panel'>
                 <div className='toolbox'>
                     <div className='toolbox__search'>
-                        <input type='search' id='tools' style={{
-                            width: '90%',
-                            borderRadius: '20px',
-                            margin: '5px',
-                        }}>
+                        <input 
+                            type='search' 
+                            id='tools' 
+                            style={{
+                                width: '90%',
+                                borderRadius: '20px',
+                                margin: '5px',
+                            }}
+                            onChange={on_change_search_handler}
+                        >
                             {/* TODO */}
                         </input>
                     </div>
                     <div className='toolbox__list'>
                         {getToolboxObjects()}
-                    </div>
-                    <div className='toolbox__scroll'>
-                        <Scroller
-                            top={scrollPosition}
-                            height={1000}
-                            onPositionChange={(top) => {
-                                setScrollPosition(top);
-                            }}>
-                        </Scroller>
-                        {/* TODO */}
                     </div>
                 </div>
                 <div className='block-details'>

@@ -32,6 +32,7 @@
         background-color: rgb(0, 0, 0);
         display: flex;
         grid-area: main;
+        border: 0px;
     }
         .main-menu__file {
             background-color: black;
@@ -76,6 +77,7 @@
         color: white;
         font-weight: 600;
         grid-area: status;
+        border: 0px;
     }
         .status-bar__total {
             background-color: rgb(57, 140, 213);
@@ -133,11 +135,8 @@
 /*  ПАНЕЛЬ ИНСТРУМЕНТОВ */
     .toolbox {
         background-color: rgb(190, 199, 207);
-        display: grid;
-        grid-template: 
-            "search   scroll" 35px
-            "toolList scroll" auto / minmax(160px, auto) 20px
-        ;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
         flex: 1 0 0;
     }
@@ -146,15 +145,17 @@
             display: flex;
             justify-content: center;
             grid-area: search;
+            flex: 0 0 35px;
         }
         .toolbox__list {
             background-color: rgb(190, 199, 207);
             gap: 10px;
             grid-area: toolList;
+            overflow-y: scroll;
         }
             .boxButton {
                 background-color: rgb(190, 199, 207);
-                color: black;
+                color: rgb(0, 0, 0);
                 width: auto;
                 height: 30px;
                 padding: 10px;
@@ -164,11 +165,6 @@
             .boxButton:hover {
                 background-color: rgb(115, 120, 125);
             }
-        .toolbox__scroll {
-            background-color: rgb(40, 45, 49);
-            position: relative;
-            grid-area: scroll;
-        }
     .block-details {
         background-color: rgb(190, 199, 207);
         border-right: 4px solid rgb(126, 132, 136);

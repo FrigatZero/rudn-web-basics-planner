@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './Editor.css'
 import { SimpleBox } from './Components/Workspace/SimpleBox';
 import BoxButtonSvg from './assets/box.svg'
@@ -14,7 +14,17 @@ export default function Editor(){
         searchValue,
         setSearchValue
     ] = useState("");
-
+    // Хуки для canvas
+    const canvasRef = useRef(null);
+    const workspaceCanvasRef = useRef(null);
+    const [
+        canvasWidth,
+        setCanvasWidth
+    ] = useState(0);
+    const [
+        canvasHeight,
+        setCanvasHeight
+    ] = useState(0);
     // Хуки для элементов рабочей области
     const [
         objectId,
@@ -77,6 +87,29 @@ export default function Editor(){
         }
         </>
     }
+    // Обновление canvas
+    const updateCanvas = useCallback(() => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (workspaceObjects?.length > 1) {
+                ctx.lineWidth = 3;
+                const first = workspaceObjects[0];
+                const fPosX = first.position.x + first.size.width/2;
+                const fPosY = first.position.y + first.size.height/2;
+
+                ctx.beginPath();
+                ctx.moveTo(fPosX, fPosY);
+                workspaceObjects.slice(1).map(x => {
+                    ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
+                    ctx.moveTo(fPosX, fPosY);
+                })
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+    }, [workspaceObjects]);
     // Получение объектов панели инструментов
     const getToolboxObjects = () => {
         function BoxButton() {
@@ -128,6 +161,23 @@ export default function Editor(){
             );
         }, []    
     )
+    useLayoutEffect(
+        () => {
+            const on_resize_handler = () => {
+                const container = workspaceCanvasRef.current
+                if (container){
+                    setCanvasHeight(container.clientHeight);
+                    setCanvasWidth(container.clientWidth);
+                }
+            }
+            addEventListener("resize", on_resize_handler);
+            on_resize_handler();
+            return () => removeEventListener("resize", on_resize_handler);
+        }, []
+    );
+    useLayoutEffect(() => {
+        updateCanvas();
+    }, [updateCanvas, canvasHeight, canvasWidth]);
     return (
         <div className='editor'>
             <div className='editor__settings'>
@@ -216,6 +266,14 @@ export default function Editor(){
                 </div>
             </div>
             <div className='editor__workspace'>
+                <div className='workspace-canvas' ref={workspaceCanvasRef}>
+                    <canvas 
+                    className='canvas' 
+                    width={canvasWidth} 
+                    height={canvasHeight}
+                    ref={canvasRef}/>
+                </div>
+
                 {getWorkspaceObjects()}
 
                 <div className='file-path'>

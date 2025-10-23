@@ -188,8 +188,18 @@
     grid-area: workspace;
     overflow: hidden;
 }
+    .workspace-canvas {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+        .canvas {
+            width: 100%;
+            height: 100%;
+        }
     .file-path {
         background-color: rgba(0, 0, 0, 0.3);
+        position: relative;
         color: aliceblue;
         font-weight: 600;
         padding-left: 10px;

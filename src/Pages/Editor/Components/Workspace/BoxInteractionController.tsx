@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { Blob } from './Blob.tsx';
-import { SIDE } from './config.ts'
+import { Blob } from './Misc/Blob.tsx';
+import { CORNER } from './config.ts'
 
 export interface IPosition {
     x: number;
@@ -55,20 +55,36 @@ export const BoxInteractionController = (props: BoxInteractionControllerProps) =
             >
             {props.id}
             <Blob
-                parentProps={props}
-                side={SIDE.TOP_LEFT}
+                parentId={props.id}
+                parentPosition={props.position}
+                parentSize={props.size}
+                onPositionChange={props.onPositionChange}
+                onResize={props.onResize}
+                corner={CORNER.TOP_LEFT}
             />
             <Blob
-                parentProps={props}
-                side={SIDE.TOP_RIGHT}
+                parentId={props.id}
+                parentPosition={props.position}
+                parentSize={props.size}
+                onPositionChange={props.onPositionChange}
+                onResize={props.onResize}
+                corner={CORNER.TOP_RIGHT}
             />
             <Blob
-                parentProps={props}
-                side={SIDE.BOTTOM_LEFT}
+                parentId={props.id}
+                parentPosition={props.position}
+                parentSize={props.size}
+                onPositionChange={props.onPositionChange}
+                onResize={props.onResize}
+                corner={CORNER.BOTTOM_LEFT}
             />
             <Blob
-                parentProps={props}
-                side={SIDE.BOTTOM_RIGHT}
+                parentId={props.id}
+                parentPosition={props.position}
+                parentSize={props.size}
+                onPositionChange={props.onPositionChange}
+                onResize={props.onResize}
+                corner={CORNER.BOTTOM_RIGHT}
             />
     </div>
 }

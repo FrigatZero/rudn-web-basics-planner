@@ -10,39 +10,19 @@ import PasteSvg from './assets/paste.svg'
 import SearchSvg from './assets/search.svg'
 
 export default function Editor(){
-    const [
-        searchValue,
-        setSearchValue
-    ] = useState("");
+    // Значение поиска тулбокса
+    const [searchValue, setSearchValue] = useState("");
     // Хуки для canvas
     const canvasRef = useRef(null);
     const workspaceCanvasRef = useRef(null);
-    const [
-        canvasWidth,
-        setCanvasWidth
-    ] = useState(0);
-    const [
-        canvasHeight,
-        setCanvasHeight
-    ] = useState(0);
+    const [canvasWidth, setCanvasWidth] = useState(0);
+    const [canvasHeight, setCanvasHeight] = useState(0);
     // Хуки для элементов рабочей области
-    const [
-        objectId,
-        setObjectId
-    ] = useState(0);
-    const [
-        workspaceObjects, 
-        setWorkspaceObjects
-    ] = useState([]);
+    const [objectId, setObjectId] = useState(0);
+    const [workspaceObjects, setWorkspaceObjects] = useState([]);
     // Хуки для элементов панели инструментов
-    const [
-        toolboxObjectId,
-        setToolboxObjectId
-    ] = useState(0);
-    const [
-        toolboxObjects,
-        setToolboxObjects
-    ] = useState([]);
+    const [toolboxObjectId, setToolboxObjectId] = useState(0);
+    const [toolboxObjects, setToolboxObjects] = useState([]);
     // Обработчик нажатия на кнопку создания коробки
     const on_click_boxButton_handler = () => {
         setWorkspaceObjects([
@@ -145,6 +125,7 @@ export default function Editor(){
         }
         </>
     }
+    // Добавляем кнопки на страницу
     useEffect(
         () => {
             setToolboxObjects(
@@ -161,6 +142,7 @@ export default function Editor(){
             );
         }, []    
     )
+    // Обработчик события ресайза
     useLayoutEffect(
         () => {
             const on_resize_handler = () => {
@@ -175,6 +157,7 @@ export default function Editor(){
             return () => removeEventListener("resize", on_resize_handler);
         }, []
     );
+    // Для обновления канваса
     useLayoutEffect(() => {
         updateCanvas();
     }, [updateCanvas, canvasHeight, canvasWidth]);

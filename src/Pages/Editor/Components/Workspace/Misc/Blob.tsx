@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { IPosition, ISize } from "../BoxInteractionController.tsx";
 import { CORNER, BLOB_SIZE } from "../config.ts"
 import './Blob.css';
@@ -14,21 +14,34 @@ export interface BlobProps {
 }
 
 export const Blob = (props: BlobProps) => {
-    const blobRef = React.useRef<HTMLDivElement>(null);
+    const blobRef = useRef<HTMLDivElement>(null);
+    const initMousePos = useRef<IPosition>({x: 0, y: 0});
+    const startPos = useRef<IPosition>({x: 0, y: 0});
+    const startSize = useRef<ISize>({width: 0, height: 0});
     // обработка событий Blob
     const isBlobDown = React.useRef<boolean>(false);
     const handleBlobDown = (e: React.PointerEvent) => {
         e.stopPropagation();
         if (isBlobDown) {
             isBlobDown.current = true;
+            initMousePos.current.x = e.clientX;
+            initMousePos.current.y = e.clientY;
+            startPos.current.x = props.parentPosition.x;
+            startPos.current.y = props.parentPosition.y;
+            startSize.current.width = props.parentSize.width;
+            startSize.current.height = props.parentSize.height;
             blobRef.current?.setPointerCapture(e.pointerId);
         }
     }
     const handleBlobUp = (e: React.PointerEvent) => {
         isBlobDown.current = false;
+        initMousePos.current.x = 0;
+        initMousePos.current.y = 0;
         blobRef.current?.releasePointerCapture(e.pointerId);
     }
     const handleBlobMove = (e: React.PointerEvent) => {
+        const dx = e.clientX - initMousePos.current.x;
+        const dy = e.clientY - initMousePos.current.y;
         const doResize = (newWidth: number, newHeight: number, newX: number, newY: number) => {
             props.onResize(
                 props.parentId, 
@@ -49,34 +62,34 @@ export const Blob = (props: BlobProps) => {
             switch(props.corner){
                 case CORNER.TOP_LEFT:
                     doResize(
-                        props.parentSize.width  - e.movementX,
-                        props.parentSize.height - e.movementY,
-                        props.parentPosition.x  + e.movementX,
-                        props.parentPosition.y  + e.movementY
+                        startSize.current.width  - dx,
+                        startSize.current.height - dy,
+                        startPos.current.x  + dx,
+                        startPos.current.y  + dy
                     )
                     break;
                 case CORNER.TOP_RIGHT: 
                     doResize(
-                        props.parentSize.width  + e.movementX,
-                        props.parentSize.height - e.movementY,
-                        props.parentPosition.x,
-                        props.parentPosition.y  + e.movementY
+                        startSize.current.width  + dx,
+                        startSize.current.height - dy,
+                        startPos.current.x,
+                        startPos.current.y  + dy
                     )
                     break;
                 case CORNER.BOTTOM_LEFT:
                     doResize(
-                        props.parentSize.width  - e.movementX,
-                        props.parentSize.height + e.movementY,
-                        props.parentPosition.x  + e.movementX,
-                        props.parentPosition.y
+                        startSize.current.width  - dx,
+                        startSize.current.height + dy,
+                        startPos.current.x  + dx,
+                        startPos.current.y
                     )
                     break;
                 case CORNER.BOTTOM_RIGHT:
                     doResize(
-                        props.parentSize.width  + e.movementX,
-                        props.parentSize.height + e.movementY,
-                        props.parentPosition.x,
-                        props.parentPosition.y
+                        startSize.current.width  + dx,
+                        startSize.current.height + dy,
+                        startPos.current.x,
+                        startPos.current.y
                     )
                     break;
             }    

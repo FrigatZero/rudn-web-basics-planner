@@ -43,6 +43,8 @@ export const Blob = (props: BlobProps) => {
         const dx = e.clientX - initMousePos.current.x;
         const dy = e.clientY - initMousePos.current.y;
         const doResize = (newWidth: number, newHeight: number, newX: number, newY: number) => {
+            var oldWidth, oldHeight = props.parentSize;
+            var oldX, oldY = props.parentPosition;
             props.onResize(
                 props.parentId, 
                 {

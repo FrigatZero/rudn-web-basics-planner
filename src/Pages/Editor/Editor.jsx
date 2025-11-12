@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './Editor.css'
 import { SimpleBox } from './Components/Workspace/SimpleBox';
+import { CanvasEngine } from './class/CanvasEngine'
+import { CanvasRender } from './Components/Canvas/CanvasRender';
 import BoxButtonSvg from './assets/box.svg'
 import CrossSvg from './assets/cross.svg'
 import UndoSvg from './assets/undo.svg'
@@ -10,86 +12,110 @@ import PasteSvg from './assets/paste.svg'
 import SearchSvg from './assets/search.svg'
 
 export default function Editor(){
-    // Значение поиска тулбокса
-    const [searchValue, setSearchValue] = useState("");
     // Хуки для canvas
     const canvasRef = useRef(null);
     const workspaceCanvasRef = useRef(null);
     const [canvasWidth, setCanvasWidth] = useState(0);
     const [canvasHeight, setCanvasHeight] = useState(0);
     // Хуки для элементов рабочей области
-    const [objectId, setObjectId] = useState(0);
+    const [objectId, setObjectId] = useState(1);
     const [workspaceObjects, setWorkspaceObjects] = useState([]);
     // Хуки для элементов панели инструментов
     const [toolboxObjectId, setToolboxObjectId] = useState(0);
     const [toolboxObjects, setToolboxObjects] = useState([]);
+    // Значение поиска тулбокса
+    const [searchValue, setSearchValue] = useState("");
+    
+    // Подключаем CanvasEngine
+    const [engine, setEngine] = useState(null);
+    useEffect (() => {
+        // if (!canvasRef.current) return;
+        console.log(canvasRef.current);
+        const canvasEngine = new CanvasEngine(canvasRef.current);
+        setEngine(canvasEngine);
+    }, [])
+
+
     // Обработчик нажатия на кнопку создания коробки
     const on_click_boxButton_handler = () => {
-        setWorkspaceObjects([
-            ...workspaceObjects,
+        engine.appendBox(
             {
-                objectId:objectId, 
-                position:{x:30,y:90},
-                size:{width:100,height:70}
+                key: objectId,
+                position: {x: 100, y: 100},
+                size: {width: 100, height: 70},
+                color: "#FFFFFF"
             }
-        ]);
+        )
         setObjectId(i => i + 1);
+        // setWorkspaceObjects([
+        //     ...workspaceObjects,
+        //     {
+        //         objectId:objectId, 
+        //         position:{x:30,y:90},
+        //         size:{width:100,height:70}
+        //     }
+        // ]);
+        // setObjectId(i => i + 1);
     }
     const on_change_search_handler = (e) => {
         setSearchValue(e.target.value);
     }
     // Получение объектов рабочей области
-    const getWorkspaceObjects = () => {
-        return <>
-        {
-            workspaceObjects.map(element => 
-                (
-                    <SimpleBox 
-                        key={element.objectId}
-                        id={element.objectId} 
-                        position={element.position}
-                        size={element.size}
-                        onNewPosition={(id, pos)=>{
-                            const oldObjects = workspaceObjects.map(x => x);
-                            const object = oldObjects.find(x => x.objectId == id);
-                            object.position = pos;
-                            setWorkspaceObjects(oldObjects);
-                        }}
-                        onNewSize={(id, size) => {
-                            const oldObjects = workspaceObjects.map(x => x)
-                            const object = oldObjects.find(x => x.objectId == id);
-                            object.size = size;
-                            setWorkspaceObjects(oldObjects);
-                        }}
-                    />
-                )
-            )
-        }
-        </>
-    }
+    // const getWorkspaceObjects = () => {
+    //     return <>
+    //     {
+    //         workspaceObjects.map(element => 
+    //             (
+    //                 <SimpleBox 
+    //                     key={element.objectId}
+    //                     id={element.objectId} 
+    //                     position={element.position}
+    //                     size={element.size}
+    //                     onNewPosition={(id, pos)=>{
+    //                         const oldObjects = workspaceObjects.map(x => x);
+    //                         const object = oldObjects.find(x => x.objectId == id);
+    //                         object.position = pos;
+    //                         setWorkspaceObjects(oldObjects);
+    //                     }}
+    //                     onNewSize={(id, size) => {
+    //                         const oldObjects = workspaceObjects.map(x => x)
+    //                         const object = oldObjects.find(x => x.objectId == id);
+    //                         object.size = size;
+    //                         setWorkspaceObjects(oldObjects);
+    //                     }}
+    //                 />
+    //             )
+    //         )
+    //     }
+    //     </>
+    // }
     // Обновление canvas
     const updateCanvas = useCallback(() => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (workspaceObjects?.length > 1) {
-                ctx.lineWidth = 3;
-                const first = workspaceObjects[0];
-                const fPosX = first.position.x + first.size.width/2;
-                const fPosY = first.position.y + first.size.height/2;
+        if (!engine) return;
+        
+        engine.render();
 
-                ctx.beginPath();
-                ctx.moveTo(fPosX, fPosY);
-                workspaceObjects.slice(1).map(x => {
-                    ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
-                    ctx.moveTo(fPosX, fPosY);
-                })
-                ctx.closePath();
-                ctx.stroke();
-            }
-        }
-    }, [workspaceObjects]);
+        // const canvas = canvasRef.current;
+        // if (true) {
+        //     const ctx = canvas.getContext("2d");
+        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //     if (workspaceObjects?.length > 1) {
+        //         ctx.lineWidth = 3;
+        //         const first = workspaceObjects[0];
+        //         const fPosX = first.position.x + first.size.width/2;
+        //         const fPosY = first.position.y + first.size.height/2;
+
+                // ctx.beginPath();
+                // ctx.moveTo(fPosX, fPosY);
+                // workspaceObjects.slice(1).map(x => {
+                //     ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
+                //     ctx.moveTo(fPosX, fPosY);
+                // })
+                // ctx.closePath();
+                // ctx.stroke();
+        //     }
+        // }
+    }, [engine]);
     // Получение объектов панели инструментов
     const getToolboxObjects = () => {
         function BoxButton() {
@@ -250,18 +276,15 @@ export default function Editor(){
             </div>
             <div className='editor__workspace'>
                 <div className='workspace-canvas' ref={workspaceCanvasRef}>
-                    <canvas 
-                    className='canvas' 
-                    width={canvasWidth} 
-                    height={canvasHeight}
-                    ref={canvasRef}/>
+                    <CanvasRender
+                        canvasWidth={canvasWidth}
+                        canvasHeight={canvasHeight}
+                        canvasRef={canvasRef}
+                        canvasEngine={engine}
+                    />
                 </div>
 
-                {getWorkspaceObjects()}
-
-                <div className='file-path'>
-                    Project / folder / folder / file_name
-                </div>
+                {/* {getWorkspaceObjects()} */}
                 
                 <div className='action-bar'>
                     <div className='action-bar__remove'>

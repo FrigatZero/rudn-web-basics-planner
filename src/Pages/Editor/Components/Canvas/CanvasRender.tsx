@@ -1,5 +1,5 @@
 import React from "react";
-import { CanvasEngine } from "../../class/CanvasEngine";
+import { CanvasEngine } from "../../../../class/CanvasEngine";
 
 export interface CanvasRenderProps {
     canvasWidth: number;

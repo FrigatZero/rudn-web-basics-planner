@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './Editor.css'
 import { SimpleBox } from './Components/Workspace/SimpleBox';
-import { CanvasEngine } from './class/CanvasEngine'
+import { CanvasEngine } from '../../class/CanvasEngine'
 import { CanvasRender } from './Components/Canvas/CanvasRender';
 import BoxButtonSvg from './assets/box.svg'
 import CrossSvg from './assets/cross.svg'
@@ -10,6 +10,7 @@ import RedoSvg from './assets/redo.svg'
 import CopySvg from './assets/copy.svg'
 import PasteSvg from './assets/paste.svg'
 import SearchSvg from './assets/search.svg'
+import { Node } from '../../class/Node';
 
 export default function Editor(){
     // Хуки для canvas
@@ -29,8 +30,6 @@ export default function Editor(){
     // Подключаем CanvasEngine
     const [engine, setEngine] = useState(null);
     useEffect (() => {
-        // if (!canvasRef.current) return;
-        console.log(canvasRef.current);
         const canvasEngine = new CanvasEngine(canvasRef.current);
         setEngine(canvasEngine);
     }, [])
@@ -38,13 +37,8 @@ export default function Editor(){
 
     // Обработчик нажатия на кнопку создания коробки
     const on_click_boxButton_handler = () => {
-        engine.appendBox(
-            {
-                key: objectId,
-                position: {x: 100, y: 100},
-                size: {width: 100, height: 70},
-                color: "#FFFFFF"
-            }
+        engine.appendNode(
+            new Node(objectId)
         )
         setObjectId(i => i + 1);
         // setWorkspaceObjects([
@@ -95,26 +89,6 @@ export default function Editor(){
         
         engine.render();
 
-        // const canvas = canvasRef.current;
-        // if (true) {
-        //     const ctx = canvas.getContext("2d");
-        //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-        //     if (workspaceObjects?.length > 1) {
-        //         ctx.lineWidth = 3;
-        //         const first = workspaceObjects[0];
-        //         const fPosX = first.position.x + first.size.width/2;
-        //         const fPosY = first.position.y + first.size.height/2;
-
-                // ctx.beginPath();
-                // ctx.moveTo(fPosX, fPosY);
-                // workspaceObjects.slice(1).map(x => {
-                //     ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
-                //     ctx.moveTo(fPosX, fPosY);
-                // })
-                // ctx.closePath();
-                // ctx.stroke();
-        //     }
-        // }
     }, [engine]);
     // Получение объектов панели инструментов
     const getToolboxObjects = () => {

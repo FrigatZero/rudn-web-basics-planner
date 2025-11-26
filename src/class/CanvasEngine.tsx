@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { Position, Size } from "../Types";
+import { Position, Link } from "../Types";
 import { Node } from "./Node";
 
 
@@ -7,103 +6,130 @@ import { Node } from "./Node";
 export class CanvasEngine {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private objects: Node[] = [];
-    private currentBox: Node | null = null;
 
+    private captured: Node | null = null;
     private initMousePos: Position = {x: 0, y: 0};
     private startPos: Position = {x: 0, y: 0};
     private isDown: boolean = false;
+
+    private nodeArray: Node[] = [];
+    private linkArray: Link[] = [
+        {from: 1, to: 4},
+        {from: 1, to: 5},
+        {from: 1, to: 0},
+        {from: 2, to: 4},
+    ];
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d")!;
         
-        this.objects = [
+        this.nodeArray = [
             new Node(0)
         ]
 
         this.render();
     }
 
-    searchShapeInPoint(_x: number, _y: number) {
-        this.objects.map(b => {
-            if (b.position.x <= _x &&
-                b.position.x + b.size.width >= _x &&
-                b.position.y <= _y &&
-                b.position.y + b.size.height >= _y
-            ) {this.currentBox = b; return}
-        })
+    nodeInPoint(_x: number, _y: number): boolean {
+        this.captured = this.nodeArray.findLast(node => 
+            node.position.x <= _x &&
+            node.position.x + node.size.width >= _x &&
+            node.position.y <= _y &&
+            node.position.y + node.size.height >= _y 
+        ) || null
+        return !!this.captured
     }
-    handlePointerDown = (_x: number, _y: number) => {
-        this.searchShapeInPoint(_x, _y)
-        if (!this.currentBox) return;
+    
+    moveTop(): boolean {
+        if (!this.captured) return false;
 
-        this.objects.push(
-            this.objects.splice(this.objects.findIndex(
-                x => x.key == this.currentBox!.key
-            ), 1)[0]
+        const currentIndex = this.nodeArray.findLastIndex(x => x.key == this.captured!.key);
+        if (currentIndex == -1 || currentIndex == (this.nodeArray.length - 1)) return false;
+
+        this.nodeArray.push(
+            this.nodeArray.splice(currentIndex, 1)[0]
         )
+        return true;
+    }
 
-        if (!this.isDown) {
+    handlePointerDown = (_x: number, _y: number) => {
+        this.nodeInPoint(_x, _y);
+        this.moveTop();
+        if (!this.isDown && !!this.captured) {
             this.isDown = true;
             this.initMousePos.x = _x;
             this.initMousePos.y = _y;
-            this.startPos.x = this.currentBox.position.x;
-            this.startPos.y = this.currentBox.position.y;
+            this.startPos.x = this.captured!.position.x;
+            this.startPos.y = this.captured!.position.y;
+
+            this.render();
         }
     }
     handlePointerUp = (_x: number, _y: number) => {
         this.isDown = false;
         this.initMousePos.x = 0;
         this.initMousePos.y = 0;
-        this.currentBox = null;
+        
+        this.render();
+        // this.captured = null;
     }
     handlePointerMove = (_x: number, _y: number) => {
-        console.log(this.currentBox, this.isDown)
         if (this.isDown) {
             const dx = _x - this.initMousePos.x;
             const dy = _y - this.initMousePos.y;
-            this.currentBox!.position = {x: this.startPos.x + dx, y: this.startPos.y + dy}
+            this.captured!.position = {x: this.startPos.x + dx, y: this.startPos.y + dy}
         }
     }
 
     appendNode(b: Node) {
-        this.objects.push(b);
+        this.nodeArray.push(b);
         this.render();
     }
 
     render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-
         // ///////////////////
-        const first = this.objects.find(x => x.key == 0) || this.objects[0];
-        const firstIndx = this.objects.findIndex(x => x.key == first.key);
-        const fposx = first.position.x + first.size.width/2;
-        const fposy = first.position.y + first.size.height;
-        this.ctx.lineWidth = 4;
-        this.ctx.strokeStyle = "#000000"
-        
-        this.ctx.beginPath();
-        this.ctx.moveTo(fposx, fposy);
-        this.objects.map(x => {
-            this.ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
-            this.ctx.moveTo(fposx, fposy);
-        })
-        this.ctx.closePath();
-        this.ctx.stroke();
-        // /////////////////// 
+        if (this.linkArray.length > 0) {
+            this.linkArray.map(link => {
+                const parent = this.nodeArray.find(x => x.key == link.from)
+                const child = this.nodeArray.find(x => x.key == link.to)
+                if (parent && child){
 
-        this.objects.map(b => {
-            this.ctx.strokeStyle = "#0f99f5ff"
-            this.ctx.lineWidth = 10;
-            this.ctx.strokeRect(b.position.x, b.position.y, b.size.width, b.size.height);
-            this.ctx.fillStyle = b.color;
-            this.ctx.fillRect(b.position.x, b.position.y, b.size.width, b.size.height);
+                    this.ctx.lineWidth = 4;
+                    this.ctx.strokeStyle = "#000000"
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(parent.position.x, parent.position.y);
+                    this.ctx.lineTo(child.position.x, child.position.y);
+                    this.ctx.stroke();
+                    this.ctx.closePath();
+                }
+            })
+        }
+        // const first = this.nodeArray.find(x => x.key == 0) || this.nodeArray[0];
+        // const firstIndx = this.nodeArray.findIndex(x => x.key == first.key);
+        // const fposx = first.position.x + first.size.width/2;
+        // const fposy = first.position.y + first.size.height;
+        // this.ctx.lineWidth = 4;
+        // this.ctx.strokeStyle = "#000000"
+        
+        // this.ctx.beginPath();
+        // this.ctx.moveTo(fposx, fposy);
+        // this.nodeArray.map(x => {
+        //     this.ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
+        //     this.ctx.moveTo(fposx, fposy);
+        // })
+        // this.ctx.closePath();
+        // this.ctx.stroke();
+        // /////////////////// 
+        this.nodeArray.map(node => {
+            if (this.captured?.key == node.key) {this.captured.drawBorder(this.ctx)}
+            node.draw(this.ctx);
 
             this.ctx.font = "30px system-ui";
             this.ctx.fillStyle = "#000000"
-            this.ctx.fillText(String(b.key), b.position.x, b.position.y + b.size.height);
+            this.ctx.fillText(String(node.key), node.position.x, node.position.y + node.size.height);
         })
     }
 }

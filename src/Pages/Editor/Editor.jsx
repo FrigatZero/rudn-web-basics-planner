@@ -20,7 +20,6 @@ export default function Editor(){
     const [canvasHeight, setCanvasHeight] = useState(0);
     // Хуки для элементов рабочей области
     const [objectId, setObjectId] = useState(1);
-    const [workspaceObjects, setWorkspaceObjects] = useState([]);
     // Хуки для элементов панели инструментов
     const [toolboxObjectId, setToolboxObjectId] = useState(0);
     const [toolboxObjects, setToolboxObjects] = useState([]);
@@ -41,54 +40,16 @@ export default function Editor(){
             new Node(objectId)
         )
         setObjectId(i => i + 1);
-        // setWorkspaceObjects([
-        //     ...workspaceObjects,
-        //     {
-        //         objectId:objectId, 
-        //         position:{x:30,y:90},
-        //         size:{width:100,height:70}
-        //     }
-        // ]);
-        // setObjectId(i => i + 1);
     }
     const on_change_search_handler = (e) => {
         setSearchValue(e.target.value);
     }
-    // Получение объектов рабочей области
-    // const getWorkspaceObjects = () => {
-    //     return <>
-    //     {
-    //         workspaceObjects.map(element => 
-    //             (
-    //                 <SimpleBox 
-    //                     key={element.objectId}
-    //                     id={element.objectId} 
-    //                     position={element.position}
-    //                     size={element.size}
-    //                     onNewPosition={(id, pos)=>{
-    //                         const oldObjects = workspaceObjects.map(x => x);
-    //                         const object = oldObjects.find(x => x.objectId == id);
-    //                         object.position = pos;
-    //                         setWorkspaceObjects(oldObjects);
-    //                     }}
-    //                     onNewSize={(id, size) => {
-    //                         const oldObjects = workspaceObjects.map(x => x)
-    //                         const object = oldObjects.find(x => x.objectId == id);
-    //                         object.size = size;
-    //                         setWorkspaceObjects(oldObjects);
-    //                     }}
-    //                 />
-    //             )
-    //         )
-    //     }
-    //     </>
-    // }
     // Обновление canvas
     const updateCanvas = useCallback(() => {
         if (!engine) return;
-        
-        engine.render();
 
+        engine.render();
+        
     }, [engine]);
     // Получение объектов панели инструментов
     const getToolboxObjects = () => {

@@ -36,7 +36,7 @@ export default function Editor(){
 
     // Обработчик нажатия на кнопку создания коробки
     const on_click_boxButton_handler = () => {
-        engine.appendNode(
+        engine.addNode(
             new Node(objectId)
         )
         setObjectId(i => i + 1);

@@ -27,7 +27,6 @@ export class CanvasEngine {
         this.nodeArray = [
             new Node(0)
         ]
-
         this.render();
     }
 
@@ -79,18 +78,22 @@ export class CanvasEngine {
             const dx = _x - this.initMousePos.x;
             const dy = _y - this.initMousePos.y;
             this.captured!.position = {x: this.startPos.x + dx, y: this.startPos.y + dy}
+            this.render();
         }
     }
 
-    appendNode(b: Node) {
+    // Add Node to the Node Array
+    addNode(b: Node) {
         this.nodeArray.push(b);
         this.render();
     }
 
+    // Main render method
     render() {
+        console.log("render")
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // ///////////////////
+        // Load Links if present
         if (this.linkArray.length > 0) {
             this.linkArray.map(link => {
                 const parent = this.nodeArray.find(x => x.key == link.from)
@@ -107,29 +110,16 @@ export class CanvasEngine {
                 }
             })
         }
-        // const first = this.nodeArray.find(x => x.key == 0) || this.nodeArray[0];
-        // const firstIndx = this.nodeArray.findIndex(x => x.key == first.key);
-        // const fposx = first.position.x + first.size.width/2;
-        // const fposy = first.position.y + first.size.height;
-        // this.ctx.lineWidth = 4;
-        // this.ctx.strokeStyle = "#000000"
-        
-        // this.ctx.beginPath();
-        // this.ctx.moveTo(fposx, fposy);
-        // this.nodeArray.map(x => {
-        //     this.ctx.lineTo(x.position.x + x.size.width/2, x.position.y + x.size.height/2);
-        //     this.ctx.moveTo(fposx, fposy);
-        // })
-        // this.ctx.closePath();
-        // this.ctx.stroke();
-        // /////////////////// 
-        this.nodeArray.map(node => {
-            if (this.captured?.key == node.key) {this.captured.drawBorder(this.ctx)}
-            node.draw(this.ctx);
+        // Load Nodes if present
+        if (this.nodeArray.length > 0) {
+            this.nodeArray.map(node => {
+                if (this.captured?.key == node.key) {this.captured.drawBorder(this.ctx)}
+                node.draw(this.ctx);
 
-            this.ctx.font = "30px system-ui";
-            this.ctx.fillStyle = "#000000"
-            this.ctx.fillText(String(node.key), node.position.x, node.position.y + node.size.height);
-        })
+                this.ctx.font = "30px system-ui";
+                this.ctx.fillStyle = "#000000"
+                this.ctx.fillText(String(node.key), node.position.x, node.position.y + node.size.height);
+            })
+        }   
     }
 }

@@ -20,7 +20,6 @@ export function CanvasRender(props: CanvasRenderProps){
         const y = e.clientY - e.currentTarget.getBoundingClientRect().y
 
         props.canvasEngine.handlePointerMove(x, y);
-        props.canvasEngine.render();
     }
     const handlePointerUp = (e: React.PointerEvent) => {
         const x = e.clientX - e.currentTarget.getBoundingClientRect().x

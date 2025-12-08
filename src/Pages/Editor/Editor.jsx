@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './Editor.css'
-import { SimpleBox } from './Components/Workspace/SimpleBox';
 import { CanvasEngine } from '../../class/CanvasEngine'
-import { CanvasRender } from './Components/Canvas/CanvasRender';
+import { CanvasRender } from '../../components/CanvasRender'
 import BoxButtonSvg from './assets/box.svg'
 import CrossSvg from './assets/cross.svg'
 import UndoSvg from './assets/undo.svg'

@@ -12,4 +12,13 @@ export interface Size {
 export interface Link {
     from: number;
     to: number;
+    fromHost?: number;
+    toHost?: number;
+}
+
+export const enum SIDE {
+    TOP = 1,
+    RIGHT,
+    BOTTOM,
+    LEFT
 }

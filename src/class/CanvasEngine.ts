@@ -1,6 +1,6 @@
 import { Position, Link } from "../Types";
+import { LinkHost } from "./LinkHost";
 import { Node } from "./Node";
-
 
 
 export class CanvasEngine {
@@ -14,10 +14,10 @@ export class CanvasEngine {
 
     private nodeArray: Node[] = [];
     private linkArray: Link[] = [
-        {from: 1, to: 4},
-        {from: 1, to: 5},
-        {from: 1, to: 0},
-        {from: 2, to: 4},
+        {from: 1, to: 5, fromHost: 2, toHost: 0},
+        {from: 1, to: 4, fromHost: 1, toHost: 0},
+        {from: 1, to: 0, fromHost: 0, toHost: 0},
+        {from: 2, to: 4, fromHost: 0, toHost: 0},
     ];
 
     constructor(canvas: HTMLCanvasElement) {
@@ -90,7 +90,7 @@ export class CanvasEngine {
 
     // Main render method
     render() {
-        console.log("render")
+        // console.log("render")
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Load Links if present
@@ -99,14 +99,30 @@ export class CanvasEngine {
                 const parent = this.nodeArray.find(x => x.key == link.from)
                 const child = this.nodeArray.find(x => x.key == link.to)
                 if (parent && child){
+                    let parentHost = parent.linkHostArray.find(host => host.key == link.fromHost)
+                    let childHost = child.linkHostArray.find(host => host.key == link.toHost)
 
-                    this.ctx.lineWidth = 4;
-                    this.ctx.strokeStyle = "#000000"
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(parent.position.x, parent.position.y);
-                    this.ctx.lineTo(child.position.x, child.position.y);
-                    this.ctx.stroke();
-                    this.ctx.closePath();
+                    if (!parentHost) {
+                        parentHost = new LinkHost(parent.linkHostArray.length, true, parent.key);
+                        parent.linkHostArray.push(parentHost);
+                    }
+                    if (!childHost) {
+                        childHost = new LinkHost(child.linkHostArray.length, true, child.key);
+                        child.linkHostArray.push(childHost);
+                    }
+
+                    parent.draw(this.ctx);
+                    child.draw(this.ctx);
+
+                    if (parentHost && childHost){
+                        this.ctx.lineWidth = 4;
+                        this.ctx.strokeStyle = "#000000"
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(parentHost.position.x, parentHost.position.y);
+                        this.ctx.lineTo(childHost.position.x, childHost.position.y);
+                        this.ctx.stroke();
+                        this.ctx.closePath();
+                    }
                 }
             })
         }

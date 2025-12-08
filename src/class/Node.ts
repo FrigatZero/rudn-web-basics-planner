@@ -1,32 +1,10 @@
 import { BoxShape } from "./BoxShape";
 import { CircleShape } from "./CircleShape";
+import { LinkHost } from "./LinkHost";
 
-export class Node extends BoxShape{
+export class Node extends BoxShape {
     public readonly key: number;
-    public linkHostArray: CircleShape[] = [
-        new CircleShape(
-            {
-                x: this.position.x + this.size.width,
-                y: this.position.y + this.size.height / 2,
-            },
-            5
-        ),
-        new CircleShape(
-            {
-                x: this.position.x + this.size.width,
-                y: this.position.y + this.size.height / 2,
-            },
-            5
-        ),
-        new CircleShape(
-            {
-                x: this.position.x + this.size.width,
-                y: this.position.y + this.size.height / 2,
-            },
-            5
-        ),
-        
-    ];
+    public linkHostArray: LinkHost[] = [];
     
     constructor(key: number){
         super();
@@ -36,7 +14,7 @@ export class Node extends BoxShape{
     draw(ctx: CanvasRenderingContext2D){
         super.draw(ctx);
         let count = 0;
-        // Draw Link hosts if
+        // Draw Link hosts if present
         if (this.linkHostArray.length > 0){
             this.linkHostArray.map(host => {
 

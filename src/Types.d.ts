@@ -10,10 +10,12 @@ export interface Size {
 }
 
 export interface Link {
+    key: number;
     from: number;
     to: number;
-    fromHost?: number;
-    toHost?: number;
+    fromPort: number;
+    toPort: number;
+    data?: any;
 }
 
 export const enum SIDE {

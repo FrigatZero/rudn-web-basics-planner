@@ -19,22 +19,22 @@ export class BoxShape {
         ctx.strokeStyle = "#000000"
         ctx.lineWidth = 5;
         ctx.beginPath();
-        ctx.roundRect(this.position.x, this.position.y, this.size.width, this.size.height, 4);
+        ctx.roundRect(this.position.x, this.position.y, this.size.width, this.size.height, 8);
         ctx.stroke();
-        ctx.closePath();
+
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.roundRect(this.position.x, this.position.y, this.size.width, this.size.height, 3);
+        ctx.roundRect(this.position.x, this.position.y, this.size.width, this.size.height, 8);
         ctx.fill();
         ctx.closePath();
     }
-    drawBorder(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = "#0f99f5ff"
-        ctx.lineWidth = 9;
+    drawBorder(ctx: CanvasRenderingContext2D, color: string = "#0f99f5ff", radius: number = 4.5) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = radius*2;
         ctx.beginPath();
-        ctx.roundRect(this.position.x, this.position.y, this.size.width, this.size.height, 4);
+        ctx.roundRect(this.position.x, this.position.y, this.size.width, this.size.height, 8);
         ctx.stroke();
-        ctx.closePath();
+
         this.draw(ctx);
     }
 }

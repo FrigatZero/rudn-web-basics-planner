@@ -16,17 +16,17 @@ export class CircleShape {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = "#000000"
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius + 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.closePath();
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.closePath();
+        // ctx.fillStyle = "#000000"
+        // ctx.lineWidth = 5;
+        // ctx.beginPath();
+        // ctx.arc(this.position.x, this.position.y, this.radius + 2, 0, 2 * Math.PI);
+        // ctx.fill();
+        // ctx.closePath();
+        // ctx.fillStyle = this.color;
+        // ctx.beginPath();
+        // ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+        // ctx.fill();
+        // ctx.closePath();
     }
     // drawBorder(ctx: CanvasRenderingContext2D) {
     //     ctx.strokeStyle = "#0f99f5ff"

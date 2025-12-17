@@ -3,6 +3,7 @@
     background-color: rgb(53, 48, 69);
     width: 100%;
     height: 100%;
+    position: fixed;
     display: grid;
     grid-template: 
         "settings settings " 70px

@@ -25,31 +25,52 @@ export default function Editor(){
     // Значение поиска тулбокса
     const [searchValue, setSearchValue] = useState("");
     
-    // Подключаем CanvasEngine
-    const [engine, setEngine] = useState(null);
+    // CanvasEngine init
+    const engine = useRef(null);
     useEffect (() => {
-        const canvasEngine = new CanvasEngine(canvasRef.current);
-        setEngine(canvasEngine);
+        if (canvasRef.current){
+            if (!engine.current){
+                engine.current = new CanvasEngine(canvasRef.current);
+            }
+        }
     }, [])
-
-
+    // Canvas updater function
+    const updateCanvas = useCallback(() => {
+        if (!engine.current) return;
+        engine.current.render();
+    }, []);
+    // Canvas updater useEffect
+    useEffect (() => {
+        if (canvasHeight <= 0 && canvasWidth <= 0) return;
+        updateCanvas();
+    }, [canvasHeight, canvasWidth])
+    // Window resize handler for canvas
+    useLayoutEffect(
+        () => {
+            const on_resize_handler = () => {
+                const container = workspaceCanvasRef.current
+                if (container){
+                    setCanvasHeight(container.clientHeight);
+                    setCanvasWidth(container.clientWidth);
+                }
+            }
+            addEventListener("resize", on_resize_handler);
+            on_resize_handler();
+            return () => removeEventListener("resize", on_resize_handler);
+        }, []
+    );
     // Обработчик нажатия на кнопку создания коробки
     const on_click_boxButton_handler = () => {
-        engine.addNode(
+        if (!engine.current) return;
+        engine.current.addNode(
             new Node(objectId)
         )
         setObjectId(i => i + 1);
+        engine.current.render();
     }
     const on_change_search_handler = (e) => {
         setSearchValue(e.target.value);
     }
-    // Обновление canvas
-    const updateCanvas = useCallback(() => {
-        if (!engine) return;
-
-        engine.render();
-        
-    }, [engine]);
     // Получение объектов панели инструментов
     const getToolboxObjects = () => {
         function BoxButton() {
@@ -102,25 +123,6 @@ export default function Editor(){
             );
         }, []    
     )
-    // Обработчик события ресайза
-    useLayoutEffect(
-        () => {
-            const on_resize_handler = () => {
-                const container = workspaceCanvasRef.current
-                if (container){
-                    setCanvasHeight(container.clientHeight);
-                    setCanvasWidth(container.clientWidth);
-                }
-            }
-            addEventListener("resize", on_resize_handler);
-            on_resize_handler();
-            return () => removeEventListener("resize", on_resize_handler);
-        }, []
-    );
-    // Для обновления канваса
-    useLayoutEffect(() => {
-        updateCanvas();
-    }, [updateCanvas, canvasHeight, canvasWidth]);
     return (
         <div className='editor'>
             <div className='editor__settings'>
